@@ -1,0 +1,10 @@
+spring:
+  main:
+    banner-mode: CONSOLE
+  application:
+    version: 1.0.0
+    name: JOB-PORTAL-SYSTEM
+  profiles:
+    active: dev
+server:
+  port: 9090
