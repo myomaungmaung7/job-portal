@@ -12,3 +12,19 @@ spring:
       hibernate:
         format_sql: true
     database: mysql
+
+  #Mail Configuration
+  mail:
+    host: sandbox.smtp.mailtrap.io
+    port: 2525
+    username: 7a8d1afb0f79ff
+    password: 6003d9d4f7dcd7
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+jwt:
+  secret: ZP4g8Nj6QbXWYr2NvG2kXsKcD1HLqEyV
