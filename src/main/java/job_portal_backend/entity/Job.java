@@ -28,7 +28,7 @@ public class Job {
     private String jobRequirement;
 
     @Enumerated(EnumType.STRING)
-    private JobStatus status;
+    private JobStatus status=JobStatus.OPEN;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

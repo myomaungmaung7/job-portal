@@ -37,6 +37,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PUBLIC_URLS).permitAll()
+                        .requestMatchers("/api/v1/jobs/post").hasAuthority("EMPLOYER")
+                        .requestMatchers("/api/v1/jobs/update/{id}").hasAnyAuthority("EMPLOYER", "EMPLOYEE")
+                        .requestMatchers("/api/v1/profile/update").hasAnyAuthority("EMPLOYER", "EMPLOYEE")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
