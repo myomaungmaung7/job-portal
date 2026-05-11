@@ -62,9 +62,9 @@ public class ServerUtil {
     public void sendCodeToEmail(User user, int expirationMinutes, String templateName) {
         String otp = generateNumericCode(6);
 
-        tokenRepository.deleteByUser(user);
+        tokenRepository.deleteByUserId(user.getId());
 
-        VerificationToken token = new VerificationToken(otp, user, expirationMinutes);
+        VerificationToken token = new VerificationToken(otp, user.getId(), expirationMinutes);
         tokenRepository.save(token);
 
         try {

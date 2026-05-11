@@ -24,7 +24,7 @@ public interface JobMapper {
         job.setLocation(dto.getLocation());
         job.setJobDescription(dto.getJobDescription());
         job.setJobRequirement(dto.getJobRequirement());
-        job.setEmployer(employer);
+        job.setEmployerId(employer.getId());
         job.setStatus(JobStatus.OPEN);
         job.setCreatedAt(LocalDateTime.now());
 

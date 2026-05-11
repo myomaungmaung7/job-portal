@@ -81,7 +81,7 @@ public class AuthServiceImpl implements AuthService{
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // find OTP
-        VerificationToken token = tokenRepository.findByUser(user)
+        VerificationToken token = tokenRepository.findByUserId(user.getId())
                 .orElseThrow(() -> new RuntimeException("OTP not found"));
 
         // check OTP
@@ -143,5 +143,26 @@ public class AuthServiceImpl implements AuthService{
                     .message("Invalid email or password")
                     .build();
         }
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse resendOtp(String email) {
+
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getStatus() == UserStatus.ACTIVE) {
+            throw new RuntimeException("Account already active");
+        }
+
+        tokenRepository.deleteByUserId(user.getId());
+        serverUtil.sendCodeToEmail(user, 15, "verifyAccountMail");
+
+        return ApiResponse.builder()
+                .success(1)
+                .code(200)
+                .message("Verification code resent successfully")
+                .build();
     }
 }

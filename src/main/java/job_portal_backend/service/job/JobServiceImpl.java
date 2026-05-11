@@ -57,7 +57,7 @@ public class JobServiceImpl implements JobService {
             return ApiResponse.builder().success(0).code(404).message("Job not found").build();
         }
 
-        if (!job.getEmployer().getId().equals(user.getId())) {
+        if (!job.getEmployerId().equals(user.getId())) {
             return ApiResponse.builder().success(0).code(403).message("You do not have permission to update this job").build();
         }
         if(jobRequestDto.getJobType()!= null) job.setJobType(jobRequestDto.getJobType());

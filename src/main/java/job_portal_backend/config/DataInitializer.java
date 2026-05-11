@@ -6,6 +6,7 @@ import job_portal_backend.entity.enums.Role;
 import job_portal_backend.entity.enums.UserStatus;
 import job_portal_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
+//@DependsOn("flyway")
 public class DataInitializer {
 
     private final UserRepository userRepository;

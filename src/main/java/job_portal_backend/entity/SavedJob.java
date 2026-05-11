@@ -1,24 +1,26 @@
 package job_portal_backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "saved_job")
 @Data
-public class SavedJob {
+@EqualsAndHashCode(callSuper = true)
+public class SavedJob extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "save_at")
+    private LocalDateTime saveAt = LocalDateTime.now();
 
-    private LocalDateTime saveAt;
+    @NotNull
+    @Column(name = "user_id")
+    private Long userId;
 
-    @ManyToOne
-    private User user;
-
-    @ManyToOne
-    private Job job;
+    @NotNull
+    @Column(name = "job_id")
+    private Long jobId;
 }

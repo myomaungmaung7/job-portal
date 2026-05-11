@@ -10,7 +10,7 @@ public class ProfileMapper {
     public static Profile toEntity(User user) {
 
         Profile profile = new Profile();
-        profile.setUser(user);
+        profile.setUserId(user.getId());
 
         if (user.getRole() == Role.EMPLOYER) {
             profile.setBusinessName(user.getUsername());

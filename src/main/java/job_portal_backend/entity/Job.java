@@ -1,42 +1,44 @@
 package job_portal_backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import job_portal_backend.entity.enums.JobStatus;
 import lombok.Data;
-
-import java.time.LocalDateTime;
-import java.util.List;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "job")
 @Data
-public class Job {
+@EqualsAndHashCode(callSuper = true)
+public class Job extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @NotBlank @Column(name = "job_type")
     private String jobType;
+
+    @NotBlank @Column(name = "salary_type")
     private String salaryType;
+
+    @NotNull @Positive
+    @Column(name = "salary_amount")
     private Double salaryAmount;
+
+    @NotBlank
+    @Column(name = "location")
     private String location;
 
-    @Column(columnDefinition = "TEXT")
+    @Lob @Column(name = "job_description", columnDefinition = "TEXT")
     private String jobDescription;
 
-    @Column(columnDefinition = "TEXT")
+    @Lob @Column(name = "job_requirement", columnDefinition = "TEXT")
     private String jobRequirement;
 
     @Enumerated(EnumType.STRING)
-    private JobStatus status=JobStatus.OPEN;
+    @Column(name = "status")
+    private JobStatus status = JobStatus.OPEN;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
-    @ManyToOne
-    @JoinColumn(name = "employer_id")
-    private User employer;
-
-    @OneToMany(mappedBy = "job")
-    private List<Application> applications;
+    @NotNull
+    @Column(name = "employer_id")
+    private Long employerId;
 }

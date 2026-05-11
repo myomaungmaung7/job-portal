@@ -10,10 +10,7 @@ import job_portal_backend.service.auth.AuthService;
 import job_portal_backend.util.ResponseUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -36,6 +33,15 @@ public class AuthController {
             @RequestBody VerifyOtpRequest otpRequest, HttpServletRequest httpRequest) {
 
         ApiResponse response = authService.verifyOtp(otpRequest);
+
+        return ResponseUtils.buildResponse(httpRequest, response);
+    }
+
+    @PostMapping("/resend-otp")
+    public ResponseEntity<ApiResponse> resendOtp(
+            @RequestParam String email, HttpServletRequest httpRequest) {
+
+        ApiResponse response = authService.resendOtp(email);
 
         return ResponseUtils.buildResponse(httpRequest, response);
     }

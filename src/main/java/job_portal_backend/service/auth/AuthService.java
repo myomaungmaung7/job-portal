@@ -11,4 +11,6 @@ public interface AuthService {
     ApiResponse verifyOtp(VerifyOtpRequest otpRequest);
 
     ApiResponse login(LoginRequest request);
+
+    ApiResponse resendOtp(String email);
 }

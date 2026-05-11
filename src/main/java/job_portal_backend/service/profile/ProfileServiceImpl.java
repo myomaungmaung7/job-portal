@@ -23,8 +23,8 @@ public class ProfileServiceImpl implements ProfileService {
         user.setUserName(dto.getUserName()); // Use whatever field name you have in User.java
         user.setPhoneNumber(dto.getPhoneNumber());
 
-        Profile profile = profileRepository.findByUser(user).orElse(new Profile());
-        profile.setUser(user);
+        Profile profile = profileRepository.findByUserId(user.getId()).orElse(new Profile());
+        profile.setUserId(user.getId());
 
 
         ProfileMapper.updateEntity(profile, dto, user.getRole());
