@@ -51,7 +51,7 @@ public class User extends BaseEntity implements UserDetails, Serializable {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        return List.of(new SimpleGrantedAuthority(this.role.name()));
     }
 
     @Override public String getUsername() { return email; }
