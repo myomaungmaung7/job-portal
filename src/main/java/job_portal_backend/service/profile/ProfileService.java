@@ -5,5 +5,5 @@ import job_portal_backend.entity.User;
 import job_portal_backend.response.ApiResponse;
 
 public interface ProfileService {
-    ApiResponse updateProfile(User user, ProfileRequestDto dto, String img, String nrcF, String nrcB);
+    ApiResponse updateProfile(ProfileRequestDto dto,User loggedInUser);
 }

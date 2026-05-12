@@ -10,11 +10,13 @@ import job_portal_backend.repository.JobRepository;
 import job_portal_backend.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class JobServiceImpl implements JobService {
 
    private final JobRepository jobRepository;
