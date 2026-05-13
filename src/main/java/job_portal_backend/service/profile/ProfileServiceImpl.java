@@ -4,7 +4,6 @@ import job_portal_backend.dto.ProfileRequestDto;
 import job_portal_backend.entity.Profile;
 import job_portal_backend.entity.User;
 import job_portal_backend.entity.enums.Role;
-import job_portal_backend.mapper.ProfileMapper;
 import job_portal_backend.repository.ProfileRepository;
 import job_portal_backend.repository.UserRepository;
 import job_portal_backend.response.ApiResponse;

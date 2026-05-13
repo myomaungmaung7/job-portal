@@ -21,7 +21,7 @@ public class JobController {
     private final JobService jobService;
 
     @PostMapping("/post")
-
+    @PreAuthorize("hasAuthority('EMPLOYER')")
     public ResponseEntity <ApiResponse> postNewJob(@AuthenticationPrincipal User user, @RequestBody JobRequestDto jobRequestDto, HttpServletRequest httpRequest) {
 
         ApiResponse response=jobService.postNewJob(user, jobRequestDto);
@@ -29,7 +29,7 @@ public class JobController {
     }
 
     @PutMapping("/update/{id}")
-
+    @PreAuthorize("hasAuthority('EMPLOYER')")
     public ResponseEntity<ApiResponse> updateJob(
             @PathVariable("id") Long jobId,
             @AuthenticationPrincipal User user,
