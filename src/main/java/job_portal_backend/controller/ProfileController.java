@@ -22,7 +22,7 @@ public class ProfileController {
 
 
     @PutMapping(value = "/update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'EMPLOYER'")
+    @PreAuthorize("hasAnyAuthority('EMPLOYEE', 'EMPLOYER')")
     public ResponseEntity<ApiResponse> update(
             @AuthenticationPrincipal User loggedInUser,
             @ModelAttribute ProfileRequestDto dto,

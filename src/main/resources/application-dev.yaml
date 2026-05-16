@@ -22,8 +22,8 @@ spring:
   mail:
     host: sandbox.smtp.mailtrap.io
     port: 2525
-    username: 7a8d1afb0f79ff
-    password: 6003d9d4f7dcd7
+    username: c8553006479278
+    password: 6f2e863aa4961f
     properties:
       mail:
         smtp:
@@ -45,7 +45,7 @@ app:
         relativePath: /image/user/nrc/back/
       cvForm:
         absolutePath: C:/projectPdf/cvForm
-        relativePath: /pdf/user/cv
+        relativePath: /pdf/user/cv/
 
 jwt:
  secret: MyNewLocalSecretKeyForJobPortal2026!
