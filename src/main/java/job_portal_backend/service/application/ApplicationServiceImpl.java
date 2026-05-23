@@ -99,8 +99,8 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
     }
     @Override
-    @Transactional(readOnly = true)
-    public ApiResponse getApplicationsForJob(Long jobId, User loggedInUser) {
+    @Transactional
+    public ApiResponse getAllApplicationsForJob(Long jobId, User loggedInUser) {
 
         var job = jobRepository.findById(jobId).orElse(null);
         if (job == null) {
@@ -111,6 +111,19 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
 
         List<Application> applications = applicationRepository.findByJobId(jobId);
+
+        boolean statusChanged = false;
+        for (Application app : applications) {
+            if (app.getStatus() == ApplicationStatus.PENDING) {
+                app.setStatus(ApplicationStatus.RECEIVED);
+                statusChanged = true;
+            }
+        }
+
+        // 2. Quietly commit changes to the database
+        if (statusChanged) {
+            applicationRepository.saveAllAndFlush(applications);
+        }
 
         List<EmployerApplicationViewDto> dtoList = applications.stream().map(app -> {
             User applicant = userRepository.findById(app.getUserId()).orElse(null);
@@ -134,6 +147,58 @@ public class ApplicationServiceImpl implements ApplicationService {
                 .message("Applications retrieved successfully")
                 .build();
     }
+
+    @Override
+    @Transactional // Standard transactional since we are updating the single row's status
+    public ApiResponse getApplicationFormById(Long applicationId, User loggedInUser) {
+
+        // 1. Find the specific application form by its ID
+        Application app = applicationRepository.findById(applicationId).orElse(null);
+        if (app == null) {
+            return ApiResponse.builder().success(0).code(404).message("Application form not found").build();
+        }
+
+        // 2. Fetch the associated job listing to verify ownership
+        var job = jobRepository.findById(app.getJobId()).orElse(null);
+        if (job == null) {
+            return ApiResponse.builder().success(0).code(404).message("Associated job listing not found").build();
+        }
+
+        // 3. Security Check: Make sure the logged-in Employer owns the job this application belongs to
+        if (!job.getEmployerId().equals(loggedInUser.getId())) {
+            return ApiResponse.builder().success(0).code(403).message("You do not own the job listing for this application").build();
+        }
+
+        // 4. Automation Step: If it was PENDING or RECEIVED, change it to VIEWED
+        if (app.getStatus() == ApplicationStatus.RECEIVED) {
+            app.setStatus(ApplicationStatus.VIEWED);
+            applicationRepository.save(app); // Quietly save just this row
+        }
+
+        // 5. Fetch the applicant's account details to build the profile view
+        User applicant = userRepository.findById(app.getUserId()).orElse(null);
+
+        // 6. Map the single form details into your existing View DTO
+        EmployerApplicationViewDto dto = EmployerApplicationViewDto.builder()
+                .applicationId(app.getId())
+                .jobId(app.getJobId())
+                .applicantId(app.getUserId())
+                .applicantName(applicant != null ? applicant.getUsername() : "Unknown")
+                .applicantEmail(applicant != null ? applicant.getEmail() : "Unknown")
+                .applicantPhone(applicant != null ? applicant.getPhoneNumber() : "Unknown")
+                .cvFileUrl(app.getCvForm())
+                .status(app.getStatus()) // This will cleanly display "VIEWED"
+                .applyAt(app.getApplyAt())
+                .build();
+
+        return ApiResponse.builder()
+                .success(1)
+                .code(200)
+                .data(dto) // Returns just this single object, not a list!
+                .message("Application form retrieved and marked as VIEWED")
+                .build();
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Resource downloadCvFile(Long applicationId, User loggedInUser) {
@@ -177,4 +242,38 @@ public class ApplicationServiceImpl implements ApplicationService {
             throw new RuntimeException("An internal error occurred while parsing the secure file stream: " + ex.getMessage());
         }
     }
+    @Override
+    @Transactional
+    public ApiResponse acceptApplication(Long applicationId, User loggedInUser) {
+
+        // 1. Fetch the targeted application record
+        Application application = applicationRepository.findById(applicationId).orElse(null);
+        if (application == null) {
+            return ApiResponse.builder().success(0).code(404).message("Application not found").build();
+        }
+
+        // 2. Fetch the linked job to perform the ownership check
+        var job = jobRepository.findById(application.getJobId()).orElse(null);
+        if (job == null) {
+            return ApiResponse.builder().success(0).code(404).message("Associated job listing not found").build();
+        }
+
+        // 3. Security: Ensure the logged-in Employer owns this job post
+        if (!job.getEmployerId().equals(loggedInUser.getId())) {
+            return ApiResponse.builder().success(0).code(403).message("You do not have permission to update this application").build();
+        }
+
+        // 4. Update the status to ACCEPTED
+        // (Ensure ApplicationStatus.ACCEPTED matches your exact enum name)
+        application.setStatus(ApplicationStatus.ACCEPTED);
+        applicationRepository.save(application);
+
+        return ApiResponse.builder()
+                .success(1)
+                .code(200)
+                .message("Application has been accepted successfully")
+                .build();
+    }
+
+
 }
