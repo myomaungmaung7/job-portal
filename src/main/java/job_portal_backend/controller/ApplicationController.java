@@ -37,19 +37,30 @@ public class ApplicationController {
 
     @GetMapping("/job/{jobId}")
     @PreAuthorize("hasAuthority('EMPLOYER')")
-    public ResponseEntity<ApiResponse> getJobApplications(
-            @PathVariable("jobId") Long jobId,
+    public ResponseEntity<ApiResponse> getAllJobApplications(
+            @PathVariable Long jobId,
             @AuthenticationPrincipal User loggedInUser,
             HttpServletRequest httpRequest) {
 
-        ApiResponse response = applyService.getApplicationsForJob(jobId, loggedInUser);
+        ApiResponse response = applyService.getAllApplicationsForJob(jobId, loggedInUser);
+
+        return ResponseUtils.buildResponse(httpRequest, response);
+    }
+    @GetMapping("/{applicationId}")
+    @PreAuthorize("hasAuthority('EMPLOYER')")
+    public ResponseEntity<ApiResponse> getApplicationFormById(
+            @PathVariable Long applicationId,
+            @AuthenticationPrincipal User loggedInUser,
+            HttpServletRequest httpRequest) {
+
+        ApiResponse response = applyService.getApplicationFormById(applicationId, loggedInUser);
         return ResponseUtils.buildResponse(httpRequest, response);
     }
 
     @GetMapping("/download-cv/{applicationId}")
     @PreAuthorize("hasAuthority('EMPLOYER')")
     public ResponseEntity<?> downloadCv(
-            @PathVariable("applicationId") Long applicationId,
+            @PathVariable Long applicationId,
             @AuthenticationPrincipal User loggedInUser) {
 
         try {
@@ -69,5 +80,16 @@ public class ApplicationController {
                             .message(ex.getMessage())
                             .build());
         }
+    }
+
+    @PutMapping("/{applicationId}/accept")
+    @PreAuthorize("hasAuthority('EMPLOYER')")
+    public ResponseEntity<ApiResponse> acceptApplication(
+            @PathVariable Long applicationId,
+            @AuthenticationPrincipal User loggedInUser,
+            HttpServletRequest httpRequest) {
+
+        ApiResponse response = applyService.acceptApplication(applicationId, loggedInUser);
+        return ResponseUtils.buildResponse(httpRequest, response);
     }
 }

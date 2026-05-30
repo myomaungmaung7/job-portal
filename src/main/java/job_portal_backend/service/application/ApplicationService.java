@@ -7,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface ApplicationService {
     ApiResponse applyJob(Long jobId, MultipartFile cvFile, User loggedInUser);
-    ApiResponse getApplicationsForJob(Long jobId, User loggedInUser);
+    ApiResponse getAllApplicationsForJob(Long jobId, User loggedInUser);
     Resource downloadCvFile(Long applicationId, User loggedInUser);
+    ApiResponse acceptApplication(Long applicationId, User loggedInUser);
+    ApiResponse getApplicationFormById(Long applicationId, User loggedInUser);
 }
