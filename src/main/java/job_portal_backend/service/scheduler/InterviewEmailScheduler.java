@@ -13,9 +13,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class InterviewEmailScheduler {
+
     private final ApplicationRepository applicationRepository;
     private final UserRepository userRepository;
     private final JavaMailSender mailSender;
@@ -32,21 +35,32 @@ public class InterviewEmailScheduler {
     @Transactional
     public void sendBatchInterviewEmails() {
         System.out.println("⏰ Scheduled Job Started: Processing batch interview emails...");
-        List<Application> acceptedApplications = applicationRepository.findByStatusWithUsers(ApplicationStatus.ACCEPTED);
+
+        List<Application> acceptedApplications = applicationRepository.findByStatus(ApplicationStatus.ACCEPTED);
+
         if (acceptedApplications.isEmpty()) {
             System.out.println("No newly accepted applications found. Skipping batch.");
             return;
         }
-        for (Application app : acceptedApplications) {
-            User applicant = userRepository.findById(app.getUserId()).orElse(null);
 
+        List<Long> userIds = acceptedApplications.stream()
+                .map(Application::getUserId)
+                .distinct()
+                .toList();
+
+        List<User> users = userRepository.findAllById(userIds);
+        Map<Long, User> userMap = users.stream()
+                .collect(Collectors.toMap(User::getId, user -> user));
+
+        for (Application app : acceptedApplications) {
+            User applicant = userMap.get(app.getUserId());
             if (applicant != null && applicant.getEmail() != null) {
                 sendEmailAsync(applicant.getEmail(), applicant.getUsername());
                 app.setStatus(ApplicationStatus.NOTIFIED);
             }
         }
         applicationRepository.saveAll(acceptedApplications);
-        System.out.println("✅ Batch processed instantly! Handed " + acceptedApplications.size() + " emails to background threads.");
+        System.out.println("✅ Batch processed! Handed " + acceptedApplications.size() + " emails to async threads.");
     }
 
     @Async
@@ -60,9 +74,10 @@ public class InterviewEmailScheduler {
                     "We are thrilled to inform you that your application form has been reviewed and accepted by the employer!\n" +
                     "You are cordially invited for an interview. The HR team will contact you shortly to lock down the exact time.\n\n" +
                     "Best regards,\nJob Portal Team");
+
             mailSender.send(message);
         } catch (Exception e) {
-            System.err.println("Async email failed for: " + toEmail + " - " + e.getMessage());
+            System.err.println("Async email engine failed for: " + toEmail + " - " + e.getMessage());
         }
     }
 }
