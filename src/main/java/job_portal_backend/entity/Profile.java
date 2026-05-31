@@ -15,6 +15,8 @@ public class Profile extends BaseEntity {
     private String profileImage;
     @Column(name = "business_name")
     private String businessName;
+    @Column(name = "employee_name")
+    private String employeeName;
     private String location;
 
     @Column(columnDefinition = "TEXT")

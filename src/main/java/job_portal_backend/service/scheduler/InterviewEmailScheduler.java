@@ -34,7 +34,7 @@ public class InterviewEmailScheduler {
     @Scheduled(fixedRate = 10000)
     @Transactional
     public void sendBatchInterviewEmails() {
-        System.out.println("⏰ Scheduled Job Started: Processing batch interview emails...");
+
 
         List<Application> acceptedApplications = applicationRepository.findByStatus(ApplicationStatus.ACCEPTED);
 
@@ -60,7 +60,7 @@ public class InterviewEmailScheduler {
             }
         }
         applicationRepository.saveAll(acceptedApplications);
-        System.out.println("✅ Batch processed! Handed " + acceptedApplications.size() + " emails to async threads.");
+
     }
 
     @Async

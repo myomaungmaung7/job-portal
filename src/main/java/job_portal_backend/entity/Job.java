@@ -20,6 +20,9 @@ public class Job extends BaseEntity {
     @NotBlank @Column(name = "salary_type")
     private String salaryType;
 
+    @NotBlank @Column(name = "salary_type")
+    private String employerName;
+
     @NotNull @Positive
     @Column(name = "salary_amount")
     private Double salaryAmount;

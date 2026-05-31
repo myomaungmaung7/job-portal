@@ -36,7 +36,7 @@ public class ProfileServiceImpl implements ProfileService {
     private String nrcBackRel;
 
     private final ProfileRepository profileRepository;
-    private final UserRepository userRepository;
+    //private final UserRepository userRepository;
     private final FileUtil fileUtil;
 
 

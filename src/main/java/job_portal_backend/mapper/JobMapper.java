@@ -10,9 +10,7 @@ import java.time.LocalDateTime;
 
 
 public interface JobMapper {
-
-
-    public static Job toEntity(JobRequestDto dto, User employer) {
+    static Job toEntity(JobRequestDto dto, User employer) {
         if (dto == null) {
             return null;
         }
@@ -25,6 +23,7 @@ public interface JobMapper {
         job.setJobDescription(dto.getJobDescription());
         job.setJobRequirement(dto.getJobRequirement());
         job.setEmployerId(employer.getId());
+        job.setEmployerName(employer.getUsername());
         job.setStatus(JobStatus.OPEN);
         job.setCreatedAt(LocalDateTime.now());
 
